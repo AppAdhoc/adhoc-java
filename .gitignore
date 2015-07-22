@@ -1,0 +1,12 @@
+.DS_Store
+/javaSdkProject/.idea
+/out
+/TestSDK
+/javaTestWeb.iml
+/javaSdkProject/adhoc-java-sdk01/target/
+./release
+
+/javaSdkProject/javaTestWeb.iml
+./scripts
+./tests
+Dockerfile
