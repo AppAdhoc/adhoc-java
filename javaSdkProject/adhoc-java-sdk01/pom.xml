@@ -1,9 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.appadhoc</groupId>
     <artifactId>adhoc-java</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>com.appadhoc.javasdk</name>
@@ -72,27 +73,27 @@
 
     <licenses>
         <!--<license>-->
-            <!--&lt;!&ndash;license用于法律上的名称&ndash;&gt;-->
-            <!--<name>Appadhoc</name>-->
-            <!--&lt;!&ndash;官方的license正文页面的URL&ndash;&gt;-->
-            <!--<url>http://www.appadhoc.com</url>-->
-            <!--&lt;!&ndash;项目分发的主要方式：-->
-              <!--repo，可以从Maven库下载-->
-              <!--manual， 用户必须手动下载和安装依赖&ndash;&gt;-->
-            <!--<distribution>repo</distribution>-->
-            <!--&lt;!&ndash;关于license的补充信息&ndash;&gt;-->
-            <!--<comments>Appadhoc AB/test</comments>-->
+        <!--&lt;!&ndash;license用于法律上的名称&ndash;&gt;-->
+        <!--<name>Appadhoc</name>-->
+        <!--&lt;!&ndash;官方的license正文页面的URL&ndash;&gt;-->
+        <!--<url>http://www.appadhoc.com</url>-->
+        <!--&lt;!&ndash;项目分发的主要方式：-->
+        <!--repo，可以从Maven库下载-->
+        <!--manual， 用户必须手动下载和安装依赖&ndash;&gt;-->
+        <!--<distribution>repo</distribution>-->
+        <!--&lt;!&ndash;关于license的补充信息&ndash;&gt;-->
+        <!--<comments>Appadhoc AB/test</comments>-->
         <!--</license>-->
 
-            <license>
-                <name>Apache License, Version 2.0</name>
-                <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-                <distribution>repo</distribution>
-            </license>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
     </licenses>
     <scm>
-        <url>https://github.com/AppAdhoc/adhoc-java/tags/adhoc-java-0.0.1</url>
-        <connection>scm:https://github.com/AppAdhoc/adhoc-java.git/tags/adhoc-java-0.0.1</connection>
+        <url>https://github.com/AppAdhoc/adhoc-java</url>
+        <connection>scm:https://github.com/AppAdhoc/adhoc-java.git</connection>
     </scm>
     <developers>
         <!--某个项目开发者的信息-->
