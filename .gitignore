@@ -1,12 +1,9 @@
 .DS_Store
-/javaSdkProject/.idea
-/out
-/TestSDK
-/javaTestWeb.iml
-/javaSdkProject/adhoc-java-sdk01/target/
+adhoc-java-sdk01/target/
 ./release
+.idea/
 
-/javaSdkProject/javaTestWeb.iml
 ./scripts
 ./tests
 Dockerfile
+javaTestWeb.iml

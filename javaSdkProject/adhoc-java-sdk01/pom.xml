@@ -1,10 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.appadhoc</groupId>
     <artifactId>adhoc-java</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <packaging>jar</packaging>
 
     <name>com.appadhoc.javasdk</name>
@@ -92,13 +91,13 @@
         </license>
     </licenses>
     <scm>
-        <url>https://github.com/AppAdhoc/adhoc-java</url>
-        <connection>scm:https://github.com/AppAdhoc/adhoc-java.git</connection>
+        <url>https://github.com/AppAdhoc/adhoc-java.git/tags/adhoc-java-0.0.1</url>
+        <connection>scm:git:https://github.com/AppAdhoc/adhoc-java.git/tags/adhoc-java-0.0.1</connection>
     </scm>
     <developers>
         <!--某个项目开发者的信息-->
         <developer>
-            <organization>Appadhoc</organization>
+            <organization>appadhoc</organization>
             <!--项目开发者所属组织的URL-->
             <organizationUrl>http://www.appadhoc.com</organizationUrl>
             <!--项目开发者所在时区， -11到12范围内的整数。-->
