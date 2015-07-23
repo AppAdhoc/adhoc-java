@@ -1,7 +1,6 @@
 .DS_Store
-.adhoc-java-sdk01/target/
-./release
-.idea/
+/adhoc-java-sdk01/target/
+/adhoc-java-sdk01/.idea/
 
 ./scripts
 ./tests
