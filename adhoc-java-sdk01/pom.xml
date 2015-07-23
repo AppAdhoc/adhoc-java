@@ -3,11 +3,11 @@
 
     <groupId>com.appadhoc</groupId>
     <artifactId>adhoc-java</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>com.appadhoc.javasdk</name>
-    <url>https://github.com/AppAdhoc/adhoc-java.git</url>
+    <url>https://www.appadhoc.com</url>
     <description>http://www.appadhoc.com</description>
 
     <properties>
@@ -91,8 +91,9 @@
         </license>
     </licenses>
     <scm>
-        <url>https://github.com/AppAdhoc/adhoc-java.git/tags/adhoc-java-0.0.1</url>
-        <connection>scm:git:https://github.com/AppAdhoc/adhoc-java.git/tags/adhoc-java-0.0.1</connection>
+        <url>https://github.com/AppAdhoc/adhoc-java.git/</url>
+        <connection>scm:git:https://github.com/AppAdhoc/adhoc-java.git</connection>
+        <developerConnection>scm:git:https://github.com/AppAdhoc/adhoc-java.git</developerConnection>
     </scm>
     <developers>
         <!--某个项目开发者的信息-->
