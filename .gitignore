@@ -1,8 +1,7 @@
 .DS_Store
-/adhoc-java-sdk01/target/
-/adhoc-java-sdk01/.idea/
-/adhoc-java-sdk01/adhoc-java-sdk01.iml
-./scripts
-./tests
+target/
+.idea/
+/scripts
+/tests
 Dockerfile
-javaTestWeb.iml
+adhoc-java.iml
