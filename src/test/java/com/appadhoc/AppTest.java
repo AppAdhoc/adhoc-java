@@ -2,6 +2,7 @@ package com.appadhoc;
 
 import com.appadhoc.javasdk.AdhocSdk;
 import com.appadhoc.javasdk.ExperimentFlags;
+import com.appadhoc.javasdk.T;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -31,7 +32,7 @@ public class AppTest
      * Rigourous Test :-)
      */
     public void testApp() {
-        AdhocSdk.getInstance().init("ADHOC_50000000000000ad80c23462");
+        AdhocSdk.getInstance().init("ADHOC_50000000000000ad80c23462", T.DEBUG);
         String cliend_id = AdhocSdk.getInstance().generateClientId();
         assertTrue(cliend_id.length() > 0);
         ExperimentFlags flag = AdhocSdk.getInstance().getExperimentFlags(cliend_id);
