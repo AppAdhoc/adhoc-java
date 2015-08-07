@@ -38,7 +38,7 @@ public class TestSDK {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        for(int i=0;i<100;i++){
+        for(int i = 0; i < 100; i++) {
             System.out.println("position : " +i);
             AdhocSdk.getInstance().getExperimentFlags(AdhocSdk.getInstance().generateClientId());
         }
