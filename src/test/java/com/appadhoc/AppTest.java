@@ -32,7 +32,7 @@ public class AppTest
      * Rigourous Test :-)
      */
     public void testApp() {
-        AdhocSdk.getInstance().init("ADHOC_50000000000000ad80c23462", T.DEBUG);
+        AdhocSdk.getInstance().init("ADHOC_50000000000000ad80c23462");
         String cliend_id = AdhocSdk.getInstance().generateClientId();
         assertTrue(cliend_id.length() > 0);
         ExperimentFlags flag = AdhocSdk.getInstance().getExperimentFlags(cliend_id);

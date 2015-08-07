@@ -8,7 +8,7 @@ public class TestSDK {
     public static void main(String[] args) {
 
 
-        AdhocSdk.getInstance().init("ADHOC_50000000000000ad80c23462", T.DEBUG);
+        AdhocSdk.getInstance().init("ADHOC_50000000000000ad80c23462");
 
 
         String client_id = AdhocSdk.getInstance().generateClientId();

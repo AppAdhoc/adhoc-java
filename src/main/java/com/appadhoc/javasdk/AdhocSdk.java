@@ -35,10 +35,11 @@ public class AdhocSdk {
     private String appkey;
 
 
-    public void init(String appkey, boolean DEBUG) {
+    public void init(String appkey) {
         this.appkey = appkey;
-        if (DEBUG) fastRemovalTest();
-        else dailyRemovalSchedule();
+        //if (T.DEBUG)
+            fastRemovalTest();
+        //else dailyRemovalSchedule();
     }
 
     private void sendRequest(String url, String client_id, String type, OnAdHocReceivedData listener, String statkey, Object value) {
@@ -190,7 +191,7 @@ public class AdhocSdk {
             public void run() {
                 removeExpiredClients();
             }
-        }, 10000);
+        }, 30000);
     }
 
     /**
@@ -222,9 +223,9 @@ public class AdhocSdk {
             String client_id = (String) entry.getKey();
             FlagBean flagBean = (FlagBean) entry.getValue();
             if (System.currentTimeMillis() - flagBean.timeLast >= ONEDAY) {
-                System.out.println("client_id: " + client_id + "is removed from HashMap.");
+                System.out.println("client_id: " + client_id + "  is removed from HashMap.");
                 T.i("client_id: " + client_id + "is removed from HashMap.");
-                map.remove(client_id);
+                iterator.remove(); // to avoid java.util.ConcurrentModificationException
                 removalCount++;
             }
         }
