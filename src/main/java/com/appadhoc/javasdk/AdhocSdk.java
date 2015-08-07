@@ -37,9 +37,9 @@ public class AdhocSdk {
 
     public void init(String appkey) {
         this.appkey = appkey;
-        //if (T.DEBUG)
+        if (T.DEBUG)
             fastRemovalTest();
-        //else dailyRemovalSchedule();
+        else dailyRemovalSchedule();
     }
 
     private void sendRequest(String url, String client_id, String type, OnAdHocReceivedData listener, String statkey, Object value) {
