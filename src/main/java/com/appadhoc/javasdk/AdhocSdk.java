@@ -22,7 +22,6 @@ public class AdhocSdk {
 
     private static long GAPTIME = 30;
     private static long ONEDAY = 86400000;
-    private static boolean DEBUG = true;
     private AdhocSdk() {
     }
 
@@ -36,7 +35,7 @@ public class AdhocSdk {
     private String appkey;
 
 
-    public void init(String appkey) {
+    public void init(String appkey, boolean DEBUG) {
         this.appkey = appkey;
         if (DEBUG) fastRemovalTest();
         else dailyRemovalSchedule();
