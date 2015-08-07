@@ -223,13 +223,13 @@ public class AdhocSdk {
             String client_id = (String) entry.getKey();
             FlagBean flagBean = (FlagBean) entry.getValue();
             if (System.currentTimeMillis() - flagBean.timeLast >= ONEDAY) {
-                System.out.println("client_id: " + client_id + "  is removed from HashMap.");
+                //System.out.println("client_id: " + client_id + "  is removed from HashMap.");
                 T.i("client_id: " + client_id + "is removed from HashMap.");
                 iterator.remove(); // to avoid java.util.ConcurrentModificationException
                 removalCount++;
             }
         }
-        System.out.println("removal end. " + "removed "+ removalCount + " entries.");
+        //System.out.println("removal end. " + "removed "+ removalCount + " entries.");
         T.i("removal end. " + "removed "+ removalCount + " entries.");
     }
 
