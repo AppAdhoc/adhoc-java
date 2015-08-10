@@ -2,6 +2,7 @@ package com.appadhoc;
 
 import com.appadhoc.javasdk.AdhocSdk;
 import com.appadhoc.javasdk.ExperimentFlags;
+import com.appadhoc.javasdk.T;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;

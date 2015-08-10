@@ -7,7 +7,6 @@ public class T {
     private static String AppName = "ADHOC_SDK";
     private static Logger log = Logger.getLogger(AppName);
     public static Boolean DEBUG = false;
-
     public static void i(String string) {
         log.setLevel(Level.INFO);
         if (DEBUG) {

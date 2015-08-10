@@ -1,8 +1,7 @@
 package com.appadhoc.javasdk;
 
 
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.*;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,7 +21,7 @@ public class AdhocSdk {
 
 
     private static long GAPTIME = 30;
-
+    private static long ONEDAY = 86400000;
     private AdhocSdk() {
     }
 
@@ -38,6 +37,9 @@ public class AdhocSdk {
 
     public void init(String appkey) {
         this.appkey = appkey;
+        if (T.DEBUG)
+            fastRemovalTest();
+        else dailyRemovalSchedule();
     }
 
     private void sendRequest(String url, String client_id, String type, OnAdHocReceivedData listener, String statkey, Object value) {
@@ -177,6 +179,58 @@ public class AdhocSdk {
     public String generateClientId() {
 
         return UUID.randomUUID().toString().toLowerCase();
+    }
+
+    /**
+     * 测试HashMap的删除
+     */
+    public static void fastRemovalTest() {
+        System.out.println("removal test will start in 10 seconds.\n");
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            public void run() {
+                removeExpiredClients();
+            }
+        }, 30000);
+    }
+
+    /**
+     * 每天的HashMap删除
+     * 指定时间是凌晨3点
+     */
+    private static void dailyRemovalSchedule() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 3);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        Date time = calendar.getTime();
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            public void run() {
+                removeExpiredClients();
+            }
+        }, time, ONEDAY);
+    }
+    /**
+     * 从HashMap中删除一天前的Client_id
+     **/
+    private static void removeExpiredClients() {
+        Iterator iterator = map.entrySet().iterator();
+        T.i("now starting remove expired clients.\n");
+        long removalCount = 0;
+        while (iterator.hasNext()) {
+            Map.Entry entry = (Map.Entry) iterator.next();
+            String client_id = (String) entry.getKey();
+            FlagBean flagBean = (FlagBean) entry.getValue();
+            if (System.currentTimeMillis() - flagBean.timeLast >= ONEDAY) {
+                //System.out.println("client_id: " + client_id + "  is removed from HashMap.");
+                T.i("client_id: " + client_id + "is removed from HashMap.");
+                iterator.remove(); // to avoid java.util.ConcurrentModificationException
+                removalCount++;
+            }
+        }
+        //System.out.println("removal end. " + "removed "+ removalCount + " entries.");
+        T.i("removal end. " + "removed "+ removalCount + " entries.");
     }
 
     /**
