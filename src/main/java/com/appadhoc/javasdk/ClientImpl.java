@@ -29,7 +29,7 @@ public class ClientImpl implements ClientInterface{
             url = new URL(targetURL);
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            connection.setRequestProperty("Content-Type", "application/json");
             // Replace all invisible unicode characters with empty string.
             urlParameters = urlParameters.replaceAll("\\p{C}", "");
 //            connection.setRequestProperty("Content-Length", "" +

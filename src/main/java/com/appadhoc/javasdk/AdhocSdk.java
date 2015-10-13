@@ -3,6 +3,7 @@ package com.appadhoc.javasdk;
 
 import java.util.*;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -12,9 +13,8 @@ import org.json.JSONObject;
 public class AdhocSdk {
 
     private String protocol = "http://";
-    private String DHOC_GETFLAGS_HOST = "api.appadhoc.com";
-    private String ADHOC_GETFLAGS_PATH = "/optimizer/api/getflags.php";
-    private String ADHOC_TRACKING_HOST = "tracking.appadhoc.com:23462";
+    private String ADHOC_GETFLAGS_PATH = "experiment.appadhoc.com/get_flags";
+    private String ADHOC_TRACKING_HOST = "tracker.appadhoc.com/tracker";
     private static AdhocSdk instance = null;
     private static final String JSON_ERROR_STR = "Failed to get experiment flags.";
     private static HashMap<String, FlagBean> map = new HashMap<String, FlagBean>();
@@ -22,6 +22,7 @@ public class AdhocSdk {
 
     private static long GAPTIME = 30;
     private static long ONEDAY = 86400000;
+
     private AdhocSdk() {
     }
 
@@ -42,27 +43,55 @@ public class AdhocSdk {
         else dailyRemovalSchedule();
     }
 
-    private void sendRequest(String url, String client_id, String type, OnAdHocReceivedData listener, String statkey, Object value) {
 
-        String values = "{" + "\"" + KeyFields.EVENT_TYPE + "\"" + ":" + "\"" + type + "\"" +
-                "," + "\"" + KeyFields.TIMESTAMP + "\"" + ":" + "\"" + System.currentTimeMillis() / 1000 + "\"" +
-                "," + "\"" + "client_id" + "\"" + ":" + "\"" + client_id + "\"" +
-                "," + "\"" + "summary" + "\"" + ":{}" +
-                "," + "\"" + "adhoc_app_track_id" + "\"" + ":" + "\"" + appkey;
-        if (statkey != null && value != null) {
-            if (value instanceof String) {
+//    {
+//        "app_key": "asdfaf",
+//            "client_id": "asdfasf",
+//            "summary": {},
+//        "custom": {},
+//        "stats": [
+//        {
+//            "key": "asdfasf",
+//                "value": 10,
+//                "timestamp": 123133
+//        }
+//        ]
+//    }
 
-                values = values + "," + "\"" + "stat_key:" + "\"" + statkey +
-                        "," + "\"" + "stat_value" + "\"" + ":" + "\"" + value + "\"" + "}";
-            } else {
-                values = values + "," + "\"" + "stat_key:" + "\"" + statkey +
-                        "," + "\"" + "stat_value" + "\"" + ":" + value + "}";
+    //    {
+//        "app_key": "ssadfsaf",
+//            "client_id": "asdfasf",
+//            "summary": {},
+//        "custom": {}
+//    }
+    private void sendRequest(String url, String client_id, OnAdHocReceivedData listener, String statkey, Object value) {
+
+        JSONObject obj = new JSONObject();
+
+        try {
+            obj.put(Constants.app_key, appkey);
+            obj.put(Constants.client_id, client_id);
+            obj.put(Constants.summary, new JSONObject());
+            obj.put(Constants.custom, new JSONObject());
+
+            if (statkey != null && value != null) {
+
+                JSONArray array = new JSONArray();
+                JSONObject stats = new JSONObject();
+                stats.put(Constants.key, statkey);
+                stats.put(Constants.value, value);
+                stats.put(Constants.timestamp, System.currentTimeMillis() / 1000);
+                array.put(stats);
+                obj.put(Constants.stats, array);
+
             }
-        } else {
-            values += "\"" + "}";
+
+        } catch (JSONException e) {
+            T.e(e);
         }
+        T.i("request is " + obj.toString());
         ClientImpl impl = new ClientImpl();
-        impl.send(url, values, listener);
+        impl.send(url, obj.toString(), listener);
 
     }
 
@@ -113,7 +142,7 @@ public class AdhocSdk {
             }
         }
 
-        boolean isRequestFast =  bean == null ? false:((System.currentTimeMillis() - bean.timeLast) < GAPTIME * 1000);
+        boolean isRequestFast = bean == null ? false : ((System.currentTimeMillis() - bean.timeLast) < GAPTIME * 1000);
 
         T.i("isRequestFast :" + isRequestFast);
         // 是测试手机
@@ -133,7 +162,7 @@ public class AdhocSdk {
 
         T.i("从网络获取flag------------------------------------------------------------>");
 
-        sendRequest(protocol + DHOC_GETFLAGS_HOST + ADHOC_GETFLAGS_PATH, client_id, String.valueOf(EventType.GET_EXPERIMENT_FLAGS), new OnAdHocReceivedData() {
+        sendRequest(protocol + ADHOC_GETFLAGS_PATH, client_id,  new OnAdHocReceivedData() {
             @Override
             public void onReceivedData(JSONObject response) {
 
@@ -211,6 +240,7 @@ public class AdhocSdk {
             }
         }, time, ONEDAY);
     }
+
     /**
      * 从HashMap中删除一天前的Client_id
      **/
@@ -230,7 +260,7 @@ public class AdhocSdk {
             }
         }
         //System.out.println("removal end. " + "removed "+ removalCount + " entries.");
-        T.i("removal end. " + "removed "+ removalCount + " entries.");
+        T.i("removal end. " + "removed " + removalCount + " entries.");
     }
 
     /**
@@ -241,35 +271,35 @@ public class AdhocSdk {
             T.e("appkey is null 请初始化 Adhocsdk");
             return;
         }
-        sendRequest(protocol + ADHOC_TRACKING_HOST, client_id, String.valueOf(EventType.REPORT_STAT), null, stat, value);
+        sendRequest(protocol + ADHOC_TRACKING_HOST, client_id, null, stat, value);
     }
 
     /**
      * 上报指标统计（int）
      **/
     public void incrementStat(String client_id, String stat, int value) {
-        sendRequest(protocol + ADHOC_TRACKING_HOST, client_id, String.valueOf(EventType.REPORT_STAT), null, stat, value);
+        sendRequest(protocol + ADHOC_TRACKING_HOST, client_id, null, stat, value);
     }
 
     /**
      * 上报指标统计（long）
      **/
     public void incrementStat(String client_id, String stat, long value) {
-        sendRequest(protocol + ADHOC_TRACKING_HOST, client_id, String.valueOf(EventType.REPORT_STAT), null, stat, value);
+        sendRequest(protocol + ADHOC_TRACKING_HOST, client_id, null, stat, value);
     }
 
     /**
      * 上报指标统计（float）
      **/
     public void incrementStat(String client_id, String stat, float value) {
-        sendRequest(protocol + ADHOC_TRACKING_HOST, client_id, String.valueOf(EventType.REPORT_STAT), null, stat, value);
+        sendRequest(protocol + ADHOC_TRACKING_HOST, client_id, null, stat, value);
     }
 
     /**
      * 上报指标统计（double）
      **/
     public void incrementStat(String client_id, String stat, double value) {
-        sendRequest(protocol + ADHOC_TRACKING_HOST, client_id, String.valueOf(EventType.REPORT_STAT), null, stat, value);
+        sendRequest(protocol + ADHOC_TRACKING_HOST, client_id,  null, stat, value);
     }
 
 
