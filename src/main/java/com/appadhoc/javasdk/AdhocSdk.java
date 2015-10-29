@@ -19,6 +19,7 @@ public class AdhocSdk {
     private static final String JSON_ERROR_STR = "Failed to get experiment flags.";
     private static HashMap<String, FlagBean> map = new HashMap<String, FlagBean>();
 
+    private JSONObject customPara = new JSONObject();
 
     private static long GAPTIME = 30;
     private static long ONEDAY = 86400000;
@@ -33,9 +34,24 @@ public class AdhocSdk {
         return instance;
     }
 
+    /**
+     * 设置自定义用户属性
+     **/
+    public void setCustomPara(HashMap<String, String> customPara) {
+        if (customPara == null) {
+            return;
+        }
+        for (Map.Entry<String, String> entry : customPara.entrySet()) {
+
+            customPara.put(entry.getKey(), entry.getValue());
+        }
+    }
+
     private String appkey;
 
-
+    /**
+     * 单例模式初始化需要用户的AppKey
+     **/
     public void init(String appkey) {
         this.appkey = appkey;
         if (T.DEBUG)
@@ -72,7 +88,7 @@ public class AdhocSdk {
             obj.put(Constants.app_key, appkey);
             obj.put(Constants.client_id, client_id);
             obj.put(Constants.summary, new JSONObject());
-            obj.put(Constants.custom, new JSONObject());
+            obj.put(Constants.custom, customPara);
 
             if (statkey != null && value != null) {
 
@@ -98,8 +114,7 @@ public class AdhocSdk {
 
     /**
      * 获取模块开关
-     * callBack
-     * 返回 json String
+     * 返回 @ExperimentFlags
      **/
     public ExperimentFlags getExperimentFlags(String client_id) {
 
@@ -162,7 +177,7 @@ public class AdhocSdk {
 
         T.i("从网络获取flag------------------------------------------------------------>");
 
-        sendRequest(protocol + ADHOC_GETFLAGS_PATH, client_id,  new OnAdHocReceivedData() {
+        sendRequest(protocol + ADHOC_GETFLAGS_PATH, client_id, new OnAdHocReceivedData() {
             @Override
             public void onReceivedData(JSONObject response) {
 
@@ -213,7 +228,7 @@ public class AdhocSdk {
     /**
      * 测试HashMap的删除
      */
-    public static void fastRemovalTest() {
+    private static void fastRemovalTest() {
         System.out.println("removal test will start in 10 seconds.\n");
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
@@ -299,7 +314,7 @@ public class AdhocSdk {
      * 上报指标统计（double）
      **/
     public void incrementStat(String client_id, String stat, double value) {
-        sendRequest(protocol + ADHOC_TRACKING_HOST, client_id,  null, stat, value);
+        sendRequest(protocol + ADHOC_TRACKING_HOST, client_id, null, stat, value);
     }
 
 
