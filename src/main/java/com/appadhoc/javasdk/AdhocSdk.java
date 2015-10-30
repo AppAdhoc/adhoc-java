@@ -69,26 +69,12 @@ public class AdhocSdk {
     }
 
 
-//    {
-//        "app_key": "asdfaf",
-//            "client_id": "asdfasf",
-//            "summary": {},
-//        "custom": {},
-//        "stats": [
-//        {
-//            "key": "asdfasf",
-//                "value": 10,
-//                "timestamp": 123133
-//        }
-//        ]
-//    }
+    // 同步方法和异步方法
 
-    //    {
-//        "app_key": "ssadfsaf",
-//            "client_id": "asdfasf",
-//            "summary": {},
-//        "custom": {}
-//    }
+    public void getExperimentFlags(String client_id,OnAdHocReceivedData listener){
+//        request
+    }
+
     private void sendRequest(String url, String client_id, OnAdHocReceivedData listener, String statkey, Object value) {
 
         JSONObject obj = new JSONObject();

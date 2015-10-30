@@ -1,5 +1,7 @@
 package com.appadhoc.javasdk;
 
+import org.json.JSONObject;
+
 import java.util.HashMap;
 
 /**
@@ -23,6 +25,11 @@ public class TestSDK {
         AdhocSdk.getInstance().incrementStat(client_id, "buy_success", 1.0f);
 
 
+        AdhocSdk.getInstance().getExperimentFlags(client_id, new OnAdHocReceivedData() {
+            public void onReceivedData(JSONObject experimentFlags) {
+
+            }
+        });
 
         ExperimentFlags flag = AdhocSdk.getInstance().getExperimentFlags(client_id);
 
