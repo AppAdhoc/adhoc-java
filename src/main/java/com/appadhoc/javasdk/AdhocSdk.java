@@ -2,6 +2,8 @@ package com.appadhoc.javasdk;
 
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,6 +22,7 @@ public class AdhocSdk {
     private static HashMap<String, FlagBean> map = new HashMap<String, FlagBean>();
 
     private JSONObject customPara = new JSONObject();
+    private int session = 30 * 60 * 1000;
 
     private static long GAPTIME = 30;
     private static long ONEDAY = 86400000;
@@ -31,19 +34,25 @@ public class AdhocSdk {
         if (instance == null) {
             instance = new AdhocSdk();
         }
+        // test code
+        ConcurrentHashMap hashMap = new ConcurrentHashMap();
         return instance;
     }
 
     /**
      * 设置自定义用户属性
      **/
-    public void setCustomPara(HashMap<String, String> customPara) {
-        if (customPara == null) {
+    public void setCustomPara(HashMap<String, String> custommap) {
+        if (custommap == null) {
             return;
         }
-        for (Map.Entry<String, String> entry : customPara.entrySet()) {
+        for (Map.Entry<String, String> entry : custommap.entrySet()) {
 
-            customPara.put(entry.getKey(), entry.getValue());
+            try {
+                customPara.put(entry.getKey(), entry.getValue());
+            } catch (JSONException e) {
+                T.e(e);
+            }
         }
     }
 
@@ -157,19 +166,24 @@ public class AdhocSdk {
             }
         }
 
-        boolean isRequestFast = bean == null ? false : ((System.currentTimeMillis() - bean.timeLast) < GAPTIME * 1000);
 
-        T.i("isRequestFast :" + isRequestFast);
-        // 是测试手机
 
-        if (isRequestFast) {
-            T.i("未从网络获取flag，距离上次取flag不足" + GAPTIME + "秒" + "duration is : "
+        if(bean!=null){
+            boolean isRequestFast = (System.currentTimeMillis() - bean.timeLast) < GAPTIME * 1000;
 
-                    + (System.currentTimeMillis() - bean.timeLast));
-        } else {
-            // 获取flag from network
-            getExperimentFlagsFromNetWork(client_id);
+            T.i("isRequestFast :" + isRequestFast);
+            // 是测试手机
+
+            if (isRequestFast && ) {
+                T.i("未从网络获取flag，距离上次取flag不足" + GAPTIME + "秒" + "duration is : "
+
+                        + (System.currentTimeMillis() - bean.timeLast));
+            } else {
+                // 获取flag from network
+                getExperimentFlagsFromNetWork(client_id);
+            }
         }
+
         return flag;
     }
 
@@ -180,8 +194,6 @@ public class AdhocSdk {
         sendRequest(protocol + ADHOC_GETFLAGS_PATH, client_id, new OnAdHocReceivedData() {
             @Override
             public void onReceivedData(JSONObject response) {
-
-
                 if (response != null && response.has("error")) {
                     String errMesg = null;
                     try {

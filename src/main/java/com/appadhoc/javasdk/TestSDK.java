@@ -1,5 +1,7 @@
 package com.appadhoc.javasdk;
 
+import java.util.HashMap;
+
 /**
  * Created by dongyuangui on 15/7/20.
  */
@@ -10,8 +12,15 @@ public class TestSDK {
 
         AdhocSdk.getInstance().init("ADHOC_50000000000000ad80c23462");
 
+        AdhocSdk.getInstance().setCustomPara(new HashMap<String, String>());
+
+        HashMap map = new HashMap<String,String>();
+        map.put("male","男");
+
+        AdhocSdk.getInstance().setCustomPara(map);
 
         String client_id = AdhocSdk.getInstance().generateClientId();
+        AdhocSdk.getInstance().incrementStat(client_id, "buy_success", 1.0f);
 
 
 
@@ -38,7 +47,7 @@ public class TestSDK {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        for(int i = 0; i < 100; i++) {
+        for(int i = 0; i < 1000000; i++) {
             System.out.println("position : " +i);
             AdhocSdk.getInstance().getExperimentFlags(AdhocSdk.getInstance().generateClientId());
         }
