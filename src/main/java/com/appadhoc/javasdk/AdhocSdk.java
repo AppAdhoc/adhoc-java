@@ -370,18 +370,6 @@ public class AdhocSdk {
         //System.out.println("removal end. " + "removed "+ removalCount + " entries.");
         T.i("removal end. " + "removed " + removalCount + " entries.");
     }
-
-    /**
-     * 上报指标统计
-     **/
-    public void incrementStat(String client_id, String stat, String value) {
-        if (appkey == null) {
-            T.e("appkey is null 请初始化 Adhocsdk");
-            return;
-        }
-        sendRequest(protocol + ADHOC_TRACKING_HOST, client_id, null, stat, value);
-    }
-
     /**
      * 上报指标统计（int）
      **/

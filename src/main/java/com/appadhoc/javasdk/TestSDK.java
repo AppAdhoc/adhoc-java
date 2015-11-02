@@ -106,7 +106,6 @@ public class TestSDK {
         AdhocSdk.getInstance().getExperimentFlags(AdhocSdk.getInstance().generateClientId());
         AdhocSdk.getInstance().getExperimentFlags(AdhocSdk.getInstance().generateClientId());
 
-        AdhocSdk.getInstance().incrementStat(client_id, "buy_success", "1");
         AdhocSdk.getInstance().incrementStat(client_id, "buy_success", 1);
         AdhocSdk.getInstance().incrementStat(client_id, "buy_success", 1l);
         AdhocSdk.getInstance().incrementStat(client_id, "buy_success", 1.0f);
