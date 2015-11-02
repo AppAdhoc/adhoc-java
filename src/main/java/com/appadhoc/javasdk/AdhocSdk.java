@@ -3,7 +3,6 @@ package com.appadhoc.javasdk;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,13 +18,12 @@ public class AdhocSdk {
     private String ADHOC_TRACKING_HOST = "tracker.appadhoc.com/tracker";
     private static AdhocSdk instance = null;
     private static final String JSON_ERROR_STR = "Failed to get experiment flags.";
-    private static HashMap<String, FlagBean> map = new HashMap<String, FlagBean>();
+    private static ConcurrentHashMap<String, FlagBean> map = new ConcurrentHashMap<String, FlagBean>();
 
     private JSONObject customPara = new JSONObject();
-    private int session = 30 * 60 * 1000;
 
-    private static long GAPTIME = 30;
-    private static long ONEDAY = 86400000;
+    private static long GAPTIME = 300 * 1000;
+//    private static long ONEDAY = 86400000;
 
     private AdhocSdk() {
     }
@@ -34,8 +32,6 @@ public class AdhocSdk {
         if (instance == null) {
             instance = new AdhocSdk();
         }
-        // test code
-        ConcurrentHashMap hashMap = new ConcurrentHashMap();
         return instance;
     }
 
@@ -63,19 +59,130 @@ public class AdhocSdk {
      **/
     public void init(String appkey) {
         this.appkey = appkey;
-        if (T.DEBUG)
-            fastRemovalTest();
-        else dailyRemovalSchedule();
+        // 每隔5分钟清理一次缓存
+        fastRemovalTest();
+//        else dailyRemovalSchedule();
     }
 
+    /**
+     * 异步请求模块开关
+     **/
 
-    // 同步方法和异步方法
-
-    public void getExperimentFlags(String client_id,OnAdHocReceivedData listener){
+    public void getExperimentFlags(String client_id, OnAdHocReceivedData listener) {
 //        request
+
+        FlagBean bean = getMemoryFlags(client_id);
+
+//        ExperimentFlags flag = new ExperimentFlags(new JSONObject());
+
+        if (bean != null) {
+            try {
+                if (listener != null) {
+                    listener.onReceivedData(new JSONObject(bean.flag));
+                }
+            } catch (JSONException e) {
+                T.e(e);
+            }
+        } else {
+            JSONObject requestJson = getRequestJsonObj(client_id, null, null);
+            ClientImpl net = new ClientImpl(map, client_id);
+            net.send(protocol + ADHOC_GETFLAGS_PATH, requestJson.toString(), listener);
+        }
+
     }
+
+    /**
+     * 同步方法获取模块开关 毫秒单位
+     **/
+    public ExperimentFlags getSynExperimentFlag(final String client_id, final int timeout) {
+
+
+        // 取内存数据
+        FlagBean bean = getMemoryFlags(client_id);
+        final ExperimentFlags mFlags = getNullExperFlag();
+        if (bean != null) {
+
+            mFlags.setFlagState(ExperimentFlags.ExperimentFlagsState.EXPERIMENT_OK.toString());
+            try {
+                mFlags.setmFlags(new JSONObject(bean.flag));
+            } catch (JSONException e) {
+                T.e(e);
+            }
+            return mFlags;
+        }
+
+        final ClientImpl net = new ClientImpl(map, client_id);
+        net.setResponseString(null);
+        JSONObject requestJson = getRequestJsonObj(client_id, null, null);
+        net.sendForResult(protocol + ADHOC_GETFLAGS_PATH, requestJson.toString());
+
+
+        int timeoutMillis = timeout;
+        do {
+            try {
+                Thread.sleep(50);
+
+                T.i(timeoutMillis + net.getResponseString());
+
+                timeoutMillis -= 50;
+
+            } catch (InterruptedException e) {
+                T.e(e);
+            }
+        } while (timeoutMillis > 0 && net.getResponseString() == null);
+
+        if (net.getResponseString() != null && !net.getResponseString().equals("UNKNOWN")) {
+            try {
+
+                JSONObject object = new JSONObject(net.getResponseString());
+
+                mFlags.setmFlags(object);
+
+                mFlags.setFlagState(ExperimentFlags.ExperimentFlagsState.EXPERIMENT_OK.toString());
+
+
+            } catch (JSONException e) {
+                T.i(JSON_ERROR_STR);
+            }
+        } else {
+
+            T.w("请求" + timeout + "内超时,取本地flag");
+            FlagBean fbCache = getMemoryFlags(client_id);
+
+            if (!fbCache.flag.equals("")) {
+                try {
+
+                    JSONObject jsObj = new JSONObject(fbCache.flag);
+
+                    mFlags.setmFlags(jsObj);
+                    mFlags.setFlagState(ExperimentFlags.ExperimentFlagsState.EXPERIMENT_OK.toString());
+
+                } catch (JSONException e) {
+
+                    T.i(JSON_ERROR_STR);
+
+                }
+            }
+        }
+        return mFlags;
+    }
+
 
     private void sendRequest(String url, String client_id, OnAdHocReceivedData listener, String statkey, Object value) {
+
+        JSONObject obj = getRequestJsonObj(client_id, statkey, value);
+        T.i("request is " + obj.toString());
+        ClientImpl impl = null;
+        if (statkey == null) {
+            impl = new ClientImpl(map, client_id);
+        } else {
+            impl = new ClientImpl(null, null);
+        }
+        impl.send(url, obj.toString(), listener);
+
+    }
+
+    private JSONObject getRequestJsonObj(String client_id, String statkey, Object value) {
 
         JSONObject obj = new JSONObject();
 
@@ -100,10 +207,7 @@ public class AdhocSdk {
         } catch (JSONException e) {
             T.e(e);
         }
-        T.i("request is " + obj.toString());
-        ClientImpl impl = new ClientImpl();
-        impl.send(url, obj.toString(), listener);
-
+        return obj;
     }
 
 
@@ -119,55 +223,44 @@ public class AdhocSdk {
 
             return null;
         }
-
         // 取内存数据
         FlagBean bean = getMemoryFlags(client_id);
 
-        ExperimentFlags flag = null;
+        ExperimentFlags flag = getNullExperFlag();
 
-        if (bean == null) {
+        if (bean != null) {
 
-            flag = getNullExperFlag();
-            T.i("bean is null");
-
-        } else {
             T.i("取内存结果：" + bean.flag);
             String flagStr = bean.flag;
 //            todo
             if (flagStr != null && !flagStr.equals("") && flagStr.indexOf("error") == -1) {
                 try {
-                    flag = new ExperimentFlags(new JSONObject(flagStr));
+                    flag.setmFlags(new JSONObject(flagStr));
 
                     flag.setFlagState(ExperimentFlags.ExperimentFlagsState.EXPERIMENT_OK.toString());
 
-                    T.i("取内存flags 结果：" + flagStr);
 
                 } catch (JSONException e) {
                     T.e("error ! flag value : " + flagStr + " when parse jsonobj");
                 }
-            } else {
-
-                flag = getNullExperFlag();
-
             }
-        }
 
-
-
-        if(bean!=null){
-            boolean isRequestFast = (System.currentTimeMillis() - bean.timeLast) < GAPTIME * 1000;
+            boolean isRequestFast = (System.currentTimeMillis() - bean.timeLast) < GAPTIME;
 
             T.i("isRequestFast :" + isRequestFast);
             // 是测试手机
-
-            if (isRequestFast && ) {
+            if (isRequestFast) {
                 T.i("未从网络获取flag，距离上次取flag不足" + GAPTIME + "秒" + "duration is : "
-
                         + (System.currentTimeMillis() - bean.timeLast));
+                return flag;
             } else {
-                // 获取flag from network
+                // 缓存过期，重新请求
                 getExperimentFlagsFromNetWork(client_id);
             }
+
+        } else {
+            // 获取flag from network
+            getExperimentFlagsFromNetWork(client_id);
         }
 
         return flag;
@@ -190,8 +283,6 @@ public class AdhocSdk {
                     T.e(new Exception(errMesg));
                     return;
                 }
-                // 缓存起来
-                map.put(client_id, new FlagBean(response.toString(), System.currentTimeMillis()));
             }
         }, null, null);
 
@@ -211,6 +302,10 @@ public class AdhocSdk {
         T.i(client_id);
 
         FlagBean bean = map.get(client_id);
+
+        if(bean!=null){
+            System.out.println("取缓存成功！" + bean.flag);
+        }
 
         return bean;
     }
@@ -233,7 +328,7 @@ public class AdhocSdk {
             public void run() {
                 removeExpiredClients();
             }
-        }, 30000);
+        }, 10000, GAPTIME);
     }
 
     /**
@@ -251,7 +346,7 @@ public class AdhocSdk {
             public void run() {
                 removeExpiredClients();
             }
-        }, time, ONEDAY);
+        }, time, GAPTIME);
     }
 
     /**
@@ -265,7 +360,7 @@ public class AdhocSdk {
             Map.Entry entry = (Map.Entry) iterator.next();
             String client_id = (String) entry.getKey();
             FlagBean flagBean = (FlagBean) entry.getValue();
-            if (System.currentTimeMillis() - flagBean.timeLast >= ONEDAY) {
+            if (System.currentTimeMillis() - flagBean.timeLast >= GAPTIME) {
                 //System.out.println("client_id: " + client_id + "  is removed from HashMap.");
                 T.i("client_id: " + client_id + "is removed from HashMap.");
                 iterator.remove(); // to avoid java.util.ConcurrentModificationException
@@ -315,8 +410,7 @@ public class AdhocSdk {
         sendRequest(protocol + ADHOC_TRACKING_HOST, client_id, null, stat, value);
     }
 
-
-    final class FlagBean {
+    public static final class FlagBean {
         // flag str
         String flag;
         // 保存上次请求时间
