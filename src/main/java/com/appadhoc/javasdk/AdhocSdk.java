@@ -322,7 +322,7 @@ public class AdhocSdk {
      * 测试HashMap的删除
      */
     private static void fastRemovalTest() {
-        System.out.println("removal test will start in 10 seconds.\n");
+//        System.out.println("removal test will start in 10 seconds.\n");
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
             public void run() {
