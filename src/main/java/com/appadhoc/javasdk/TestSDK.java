@@ -12,7 +12,7 @@ public class TestSDK {
     public static void main(String[] args) {
 
         // flag内容有误
-        // 过期没有清楚
+        // 过期没有清除
 
         AdhocSdk.getInstance().init("ADHOC_50000000000000ad80c23462");
 
