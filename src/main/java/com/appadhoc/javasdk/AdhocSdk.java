@@ -13,27 +13,24 @@ import org.json.JSONObject;
  */
 public class AdhocSdk {
 
-    private String protocol = "http://";
-    private String ADHOC_GETFLAGS_PATH = "experiment.appadhoc.com/get_flags";
-    private String ADHOC_TRACKING_HOST = "tracker.appadhoc.com/tracker";
-    private static AdhocSdk instance = null;
+    private static String protocol = "http://";
+    private static String ADHOC_GETFLAGS_PATH = "experiment.appadhoc.com/get_flags";
+    private static String ADHOC_TRACKING_HOST = "tracker.appadhoc.com/tracker";
+//    private static AdhocSdk instance = null;
     private static final String JSON_ERROR_STR = "Failed to get experiment flags.";
-    private static ConcurrentHashMap<String, FlagBean> map = new ConcurrentHashMap<String, FlagBean>();
+    public ConcurrentHashMap<String, FlagBean> map = new ConcurrentHashMap<String, FlagBean>();
 
     private JSONObject customPara = new JSONObject();
 
     private static long GAPTIME = 300 * 1000;
 //    private static long ONEDAY = 86400000;
 
-    private AdhocSdk() {
-    }
-
-    public static AdhocSdk getInstance() {
-        if (instance == null) {
-            instance = new AdhocSdk();
-        }
-        return instance;
-    }
+//    public static AdhocSdk getInstance() {
+////        if (instance == null) {
+//            instance = new AdhocSdk();
+////        }
+//        return instance;
+//    }
 
     /**
      * 设置自定义用户属性
@@ -55,9 +52,9 @@ public class AdhocSdk {
     private String appkey;
 
     /**
-     * 单例模式初始化需要用户的AppKey
+     * 初始化需要用户的AppKey
      **/
-    public void init(String appkey) {
+    public AdhocSdk(String appkey) {
         this.appkey = appkey;
         // 每隔5分钟清理一次缓存
         fastRemovalTest();
@@ -321,7 +318,7 @@ public class AdhocSdk {
     /**
      * 测试HashMap的删除
      */
-    private static void fastRemovalTest() {
+    private void fastRemovalTest() {
 //        System.out.println("removal test will start in 10 seconds.\n");
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
@@ -335,24 +332,24 @@ public class AdhocSdk {
      * 每天的HashMap删除
      * 指定时间是凌晨3点
      */
-    private static void dailyRemovalSchedule() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 3);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        Date time = calendar.getTime();
-        Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
-            public void run() {
-                removeExpiredClients();
-            }
-        }, time, GAPTIME);
-    }
+//    private static void dailyRemovalSchedule() {
+//        Calendar calendar = Calendar.getInstance();
+//        calendar.set(Calendar.HOUR_OF_DAY, 3);
+//        calendar.set(Calendar.MINUTE, 0);
+//        calendar.set(Calendar.SECOND, 0);
+//        Date time = calendar.getTime();
+//        Timer timer = new Timer();
+//        timer.schedule(new TimerTask() {
+//            public void run() {
+//                removeExpiredClients();
+//            }
+//        }, time, GAPTIME);
+//    }
 
     /**
      * 从HashMap中删除一天前的Client_id
      **/
-    private static void removeExpiredClients() {
+    private void removeExpiredClients() {
         Iterator iterator = map.entrySet().iterator();
         T.i("now starting remove expired clients.\n");
         long removalCount = 0;

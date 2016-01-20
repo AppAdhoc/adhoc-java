@@ -2,7 +2,6 @@ package com.appadhoc;
 
 import com.appadhoc.javasdk.AdhocSdk;
 import com.appadhoc.javasdk.ExperimentFlags;
-import com.appadhoc.javasdk.T;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -32,10 +31,10 @@ public class AppTest
      * Rigourous Test :-)
      */
     public void testApp() {
-        AdhocSdk.getInstance().init("ADHOC_50000000000000ad80c23462");
-        String cliend_id = AdhocSdk.getInstance().generateClientId();
+        AdhocSdk adhoc = new AdhocSdk("ADHOC_50000000000000ad80c23462");
+        String cliend_id = adhoc.generateClientId();
         assertTrue(cliend_id.length() > 0);
-        ExperimentFlags flag = AdhocSdk.getInstance().getExperimentFlags(cliend_id);
+        ExperimentFlags flag = adhoc.getExperimentFlags(cliend_id);
         assertTrue(flag.getRawFlags().toString().equals("{}"));
 
         try {
@@ -43,12 +42,12 @@ public class AppTest
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        ExperimentFlags flag2 = AdhocSdk.getInstance().getExperimentFlags(cliend_id);
+        ExperimentFlags flag2 = adhoc.getExperimentFlags(cliend_id);
         if(flag.getBooleanFlag("btn_color",false)){
 
         }
         assertTrue(flag2.getRawFlags().toString().length() > "{}".length());
-        AdhocSdk.getInstance().incrementStat(cliend_id, "buy_success", 1);
+        adhoc.incrementStat(cliend_id, "buy_success", 1);
 
     }
 }
