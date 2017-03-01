@@ -14,3 +14,5 @@ https://oss.sonatype.org/#welcome 发布release检查
 <artifactId>adhoc-java</artifactId>
 <version>0.0.1</version>
 </dependency>
+
+test sbt
